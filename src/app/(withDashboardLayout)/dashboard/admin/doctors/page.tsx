@@ -13,6 +13,7 @@ import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast } from "sonner";
 import { useDebounced } from "@/redux/hooks";
+import { IDoctor } from "@/types/doctor";
 
 const DoctorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -31,7 +32,7 @@ const DoctorsPage = () => {
   }
 
   const { data, isLoading } = useGetAllDoctorsQuery({ ...query });
-  const doctors = data?.doctors;
+  const doctors = data?.doctors as IDoctor[];
   const meta = data?.meta;
   const [deleteDoctor] = useDeleteDoctorMutation();
 
