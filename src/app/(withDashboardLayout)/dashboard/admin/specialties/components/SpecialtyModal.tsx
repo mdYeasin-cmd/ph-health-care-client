@@ -22,20 +22,16 @@ const SpecialtyModal = ({ open, setOpen }: TProps) => {
   const handleFormSubmit = async (values: FieldValues) => {
     const data = modifyPayload(values);
 
-    values.startDate = dateFormatter(values.startDate);
-
-    console.log(values, "values");
-
-    // try {
-    //   const res = await createSpecialty(data).unwrap();
-    //   console.log(res, "create specialty");
-    //   if (res?.id) {
-    //     toast.success("Specialty created successfully!");
-    //     setOpen(false);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const res = await createSpecialty(data).unwrap();
+      console.log(res, "create specialty");
+      if (res?.id) {
+        toast.success("Specialty created successfully!");
+        setOpen(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -47,12 +43,6 @@ const SpecialtyModal = ({ open, setOpen }: TProps) => {
           </Grid>
           <Grid item md={6}>
             <PHFileUploader name={"file"} label={"File Uploader"} />
-          </Grid>
-          <Grid item md={6}>
-            <PHDatePicker name="startDate" label="Start Date" />
-          </Grid>
-          <Grid item md={6}>
-            <PHDatePicker name="endDate" label="End Date" />
           </Grid>
         </Grid>
         <Button type="submit" sx={{ mt: 1 }}>

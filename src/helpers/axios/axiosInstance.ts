@@ -1,6 +1,7 @@
 import { authKey } from "@/constants/authKey";
+import { getNewAccessToken } from "@/services/auth.service";
 import { IGenericErrorResponse, ResponseSuccessType } from "@/types";
-import { getFromLocalStorage } from "@/utils/local-storage";
+import { getFromLocalStorage, setToLocalStorage } from "@/utils/local-storage";
 import axios from "axios";
 
 const instance = axios.create();
@@ -38,7 +39,18 @@ instance.interceptors.response.use(
     };
     return responseObject;
   },
-  function (error) {
+  async function (error) {
+    const config = error.config;
+
+    if (error?.response?.status === 401) {
+      const response = await getNewAccessToken();
+      const accessToken = response?.data?.accessToken;
+
+      config.headers["Authorization"] = accessToken;
+      setToLocalStorage(authKey, accessToken);
+      return instance(config);
+    }
+
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     const responseObject: IGenericErrorResponse = {
