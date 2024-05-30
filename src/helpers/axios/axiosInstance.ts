@@ -42,24 +42,25 @@ instance.interceptors.response.use(
   async function (error) {
     const config = error.config;
 
-    if (error?.response?.status === 401) {
+    if (error?.response?.status === 401 && !config.sent) {
+      config.sent = true;
       const response = await getNewAccessToken();
       const accessToken = response?.data?.accessToken;
 
       config.headers["Authorization"] = accessToken;
       setToLocalStorage(authKey, accessToken);
       return instance(config);
+    } else {
+      // Any status codes that falls outside the range of 2xx cause this function to trigger
+      // Do something with response error
+      const responseObject: IGenericErrorResponse = {
+        statusCode: error?.response?.data?.statusCode || 500,
+        message: error?.response?.data?.message || "Something went wrong!!!",
+        errorMessages: error?.response?.data?.message,
+      };
+      // return Promise.reject(error);
+      return responseObject;
     }
-
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    const responseObject: IGenericErrorResponse = {
-      statusCode: error?.response?.data?.statusCode || 500,
-      message: error?.response?.data?.message || "Something went wrong!!!",
-      errorMessages: error?.response?.data?.message,
-    };
-    // return Promise.reject(error);
-    return responseObject;
   }
 );
 
