@@ -4,6 +4,15 @@ export type ISchedule = {
   endDate: string;
 };
 
+export type IDoctorSchedule = {
+  doctorId?: string;
+  startDate: string;
+  endDate: string;
+  schedule: {
+    startDateTime: string;
+  };
+};
+
 export type IScheduleFrom = {
   startDate: Date;
   endDate: Date;
